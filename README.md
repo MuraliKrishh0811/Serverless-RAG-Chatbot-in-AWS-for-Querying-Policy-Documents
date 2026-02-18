@@ -34,3 +34,40 @@ For this project, I leveraged a serverless architecture on AWS to keep it scalab
 ## Why This Matters
 
 For employees, this reduces the time spent finding useful information about work policies. For developers, this project demonstrates how quickly we can deploy a useful GenAI application using managed services like Bedrock without needing to manage complex infrastructure or manually chain LLM prompts.
+
+---
+
+## Prerequisites
+
+Before deploying this architecture, ensure you have the following:
+* An active **AWS Account** with administrative privileges.
+* Access granted in Amazon Bedrock for the following models:
+  * **Anthropic Claude 3.5 Sonnet**
+  * **Amazon Titan Text Embeddings G1**
+
+## Setup Instructions
+
+### 1. Document Storage (Amazon S3)
+1. Create an Amazon S3 bucket (e.g., `employee-policy-documents-xyz`).
+2. Upload the PDF files containing the employee policies or handbooks into the bucket.
+
+### 2. Knowledge Base (Amazon Bedrock & OpenSearch)
+1. Navigate to **Amazon Bedrock** -> **Knowledge bases** and click **Create knowledge base**.
+2. Point the data source to your newly created S3 bucket.
+3. Select **Amazon Titan Text Embeddings G1** as the embedding model.
+4. Allow Bedrock to create a new **Amazon OpenSearch Serverless** vector store automatically.
+5. Once created, select your data source and click **Sync** to vectorize and index the PDFs. 
+
+### 3. Conversational Interface (Amazon Lex)
+1. Navigate to **Amazon Lex** and create a new blank bot.
+2. Add the built-in `AMAZON.QnAIntent`.
+3. Under the Fulfillment section for this intent, enable the Bedrock integration.
+4. Select **Anthropic Claude 3.5 Sonnet** as the generative model and paste your **Knowledge Base ID**.
+5. Configure the `FallbackIntent` to handle graceful failures and out-of-scope questions.
+6. **Important:** Navigate to IAM and ensure the auto-generated Lex Service Role has the `AmazonBedrockFullAccess` policy (or scoped-down equivalent) attached.
+7. Click **Build** and use the test console to verify the bot.
+
+## Usage
+
+Once the Lex bot is built and synced with the Bedrock Knowledge Base, you can test it directly in the AWS Lex console by asking natural language questions. 
+
