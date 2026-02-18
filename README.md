@@ -1,4 +1,4 @@
-# Serverless-RAG-Chatbot-in-AWS-for-Querying-Policy-Documents
+# A Simple RAG-Powered Chatbot in AWS using Amazon Lex & Bedrock
 
 ## Introduction
 
